@@ -5,86 +5,68 @@ local parser = require("learnlua.parser")
 local ui = require("learnlua.ui")
 local runner = require("learnlua.runner")
 
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = "*/LearnLua.nvim/*.md",
-  callback = function()
-    -- Find the line number for Part I
-    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-    for i, line in ipairs(lines) do
-      if line:find("Part I") then
-        vim.api.nvim_buf_set_mark(0, "L", i, 0, {})
-      elseif line:find("Part II") then
-        vim.api.nvim_buf_set_mark(0, "V", i, 0, {})
-      end
-    end
-  end,
-})
-
 M.start = function(args)
   if not args then
     local filepath = plugin_path .. "/lessons/lesson_00_welcome.md"
-    local ok, sections = pcall(parser.parse, filepath)
-    if not ok or #sections == 0 then
-      -- welcome has no exercises, just display it raw
-      local lines = vim.fn.readfile(filepath)
-      local buf = vim.api.nvim_create_buf(false, true)
+    -- welcome has no exercises, just display it raw
+    local lines = vim.fn.readfile(filepath)
+    local buf = vim.api.nvim_create_buf(false, true)
 
-      -- 1. Check if the buffer is already loaded
-      local existing_buf = vim.fn.bufnr(filepath)
-      if existing_buf ~= -1 and vim.api.nvim_buf_is_valid(existing_buf) then
-        vim.api.nvim_set_current_buf(existing_buf)
-        return
-      end
-
-      -- Safe name setting
-      vim.api.nvim_buf_set_name(buf, filepath)
-      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-
-      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-      vim.bo[buf].filetype = "markdown"
-      vim.bo[buf].modifiable = false
-      vim.api.nvim_set_current_buf(buf)
-
-      -- set path as a local option for the current window
-      vim.opt_local.path = plugin_path .. "/lessons/"
-
-      -- 1. Jump to Part I (Lua)
-      vim.keymap.set("n", "gl", function()
-        vim.fn.cursor(1, 1)
-        if vim.fn.search([[### Part I]], "W") == 0 then
-          print("Section 'Part I' not found")
-        end
-        vim.cmd("normal! zt")
-      end, opts)
-
-      -- 2. Jump to Part II (Neovim API)
-      vim.keymap.set("n", "gn", function()
-        vim.fn.cursor(1, 1)
-        if vim.fn.search([[### Part II]], "W") == 0 then
-          print("Section 'Part II' not found")
-        end
-        vim.cmd("normal! zt")
-      end, opts)
-
-      -- gf opens the lesson under cursor
-      vim.keymap.set("n", "gf", function()
-        local word = vim.fn.expand("<cWORD>")
-        -- strip surrounding backticks and any punctuation
-        local lesson = word:match("`([%w_%-]+)`")
-        if not lesson then
-          lesson = word:match("([%w_%-]+)$")
-        end
-        if lesson then
-          M.start(lesson)
-        else
-          print("No lesson found under cursor")
-        end
-      end, { buffer = buf, noremap = true })
-
-      vim.keymap.set("n", "q", function()
-        vim.api.nvim_buf_delete(buf, { force = true })
-      end, { buffer = buf })
+    -- 1. Check if the buffer is already loaded
+    local existing_buf = vim.fn.bufnr(filepath)
+    if existing_buf ~= -1 and vim.api.nvim_buf_is_valid(existing_buf) then
+      vim.api.nvim_set_current_buf(existing_buf)
+      return
     end
+
+    -- Safe name setting
+    vim.api.nvim_buf_set_name(buf, filepath)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.bo[buf].filetype = "markdown"
+    vim.bo[buf].modifiable = false
+    vim.api.nvim_set_current_buf(buf)
+
+    -- set path as a local option for the current window
+    vim.opt_local.path = plugin_path .. "/lessons/"
+
+    -- 1. Jump to Part I (Lua)
+    vim.keymap.set("n", "gl", function()
+      vim.fn.cursor(1, 1)
+      if vim.fn.search([[### Part I]], "W") == 0 then
+        print("Section 'Part I' not found")
+      end
+      vim.cmd("normal! zt")
+    end, {})
+
+    -- 2. Jump to Part II (Neovim API)
+    vim.keymap.set("n", "gn", function()
+      vim.fn.cursor(1, 1)
+      if vim.fn.search([[### Part II]], "W") == 0 then
+        print("Section 'Part II' not found")
+      end
+      vim.cmd("normal! zt")
+    end, {})
+
+    -- gf opens the lesson under cursor
+    vim.keymap.set("n", "gf", function()
+      local word = vim.fn.expand("<cWORD>")
+      -- strip surrounding backticks and any punctuation
+      local lesson = word:match("`([%w_%-]+)`")
+      if not lesson then
+        lesson = word:match("([%w_%-]+)$")
+      end
+      if lesson then
+        M.start(lesson)
+      else
+        print("No lesson found under cursor")
+      end
+    end, { buffer = buf, noremap = true })
+
+    vim.keymap.set("n", "q", function()
+      vim.api.nvim_buf_delete(buf, { force = true })
+    end, { buffer = buf })
     return
   end
 
