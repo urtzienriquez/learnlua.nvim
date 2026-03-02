@@ -123,12 +123,30 @@ M.open = function(sections, runner, filepath)
 
     vim.api.nvim_buf_clear_namespace(lesson_buf, ns, current_closing, current_closing + 2)
 
+    -- vim.api.nvim_buf_set_extmark(lesson_buf, ns, current_closing + 1, 0, {
+    --   virt_lines_above = true,
+    --   virt_lines = {
+    --     { { "  result: " .. display_result, "Comment" } },
+    --     { { correct and "  ✓ Correct!" or "  ✗ " .. msg, correct and "DiagnosticOk" or "DiagnosticError" } },
+    --   },
+    -- })
+    local virt = {}
+    if correct ~= nil then
+      table.insert(virt, { { "  result: " .. display_result, "Comment" } })
+    end
+    table.insert(
+      virt,
+      {
+        {
+          correct == true and "  ✓ Correct!" or correct == false and "  ✗ " .. msg or "  ⓘ " .. msg,
+          correct == true and "DiagnosticOk" or correct == false and "DiagnosticError" or "DiagnosticInfo",
+        },
+      }
+    )
+
     vim.api.nvim_buf_set_extmark(lesson_buf, ns, current_closing + 1, 0, {
       virt_lines_above = true,
-      virt_lines = {
-        { { "  result: " .. display_result, "Comment" } },
-        { { correct and "  ✓ Correct!" or "  ✗ " .. msg, correct and "DiagnosticOk" or "DiagnosticError" } },
-      },
+      virt_lines = virt,
     })
   end
 
@@ -170,6 +188,10 @@ M.open = function(sections, runner, filepath)
   end
 
   local function open_editor(code_lines, section, marker, block_start)
+    if not section.expected then
+      show_feedback(marker, nil, "Nothing to evaluate in this chunk", "")
+      return
+    end
     local editor_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_name(editor_buf, vim.fn.tempname() .. ".lua")
     vim.api.nvim_buf_set_lines(editor_buf, 0, -1, false, code_lines)
