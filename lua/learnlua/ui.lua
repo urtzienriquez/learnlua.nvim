@@ -12,12 +12,25 @@ local LSP_SETTINGS = {
 }
 
 local function start_lsp(buf)
+  -- Safety: only attach to lua buffers, never markdown or anything else
+  if vim.bo[buf].filetype ~= "lua" then
+    return
+  end
+
+  -- If already attached to THIS buffer specifically, do nothing
+  local already = vim.lsp.get_clients({ name = "lua_ls", bufnr = buf })
+  if #already > 0 then
+    return
+  end
+
+  -- If the server is running but not yet attached to this buffer, just attach
   local existing = vim.lsp.get_clients({ name = "lua_ls" })
   if #existing > 0 then
     vim.lsp.buf_attach_client(buf, existing[1].id)
     return
   end
 
+  -- Server not running yet — find the binary
   local candidates = {
     vim.fn.stdpath("data") .. "/mason/bin/lua-language-server",
     vim.fn.exepath("lua-language-server"),
@@ -41,7 +54,12 @@ local function start_lsp(buf)
     cmd = { cmd },
     root_dir = vim.fn.getcwd(),
     settings = LSP_SETTINGS,
-  })
+  }, { bufnr = buf })
+
+  if not client_id then
+    vim.notify("learnlua: failed to start lua-language-server", vim.log.levels.WARN)
+  end
+
   if client_id then
     vim.lsp.buf_attach_client(buf, client_id)
   end
@@ -103,7 +121,6 @@ M.open = function(sections, runner, filepath)
 
     local display_result = tostring(result):gsub("\n", " "):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
 
-    -- only clear these specific lines, not the whole buffer
     vim.api.nvim_buf_clear_namespace(lesson_buf, ns, current_closing, current_closing + 2)
 
     vim.api.nvim_buf_set_extmark(lesson_buf, ns, current_closing + 1, 0, {
@@ -139,8 +156,6 @@ M.open = function(sections, runner, filepath)
       return nil, nil, nil, nil
     end
 
-    -- count how many ```lua markers appear before this one
-    -- that tells us which exercise index we're in, regardless of line shifts
     local exercise_index = 0
     for i = 0, marker do
       if lines[i + 1] and lines[i + 1]:match("^```lua") then
@@ -158,6 +173,8 @@ M.open = function(sections, runner, filepath)
     local editor_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_name(editor_buf, vim.fn.tempname() .. ".lua")
     vim.api.nvim_buf_set_lines(editor_buf, 0, -1, false, code_lines)
+
+    -- Set filetype BEFORE calling start_lsp so the filetype guard works correctly
     vim.bo[editor_buf].filetype = "lua"
     start_lsp(editor_buf)
 
@@ -210,6 +227,10 @@ M.open = function(sections, runner, filepath)
 
   vim.keymap.set("n", "q", function()
     vim.api.nvim_buf_delete(lesson_buf, { force = true })
+  end, { buffer = lesson_buf })
+
+  vim.keymap.set("n", "gO", function()
+    vim.cmd("Learn")
   end, { buffer = lesson_buf })
 end
 
