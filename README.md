@@ -14,7 +14,7 @@ With lazy.nvim:
 
 ```lua
 return {
-  "Urtzienriquez/learnlua.nvim",
+  "urtzienriquez/learnlua.nvim",
   cmd = "Learn",
 }
 ```
