@@ -14,9 +14,6 @@ M.start = function(args)
   local cfg = config.get()
   if not args then
     local filepath = plugin_path .. "/lessons/lesson_00_welcome.md"
-    -- welcome has no exercises, just display it raw
-    local lines = vim.fn.readfile(filepath)
-    local buf = vim.api.nvim_create_buf(false, true)
 
     -- 1. Check if the buffer is already loaded
     local existing_buf = vim.fn.bufnr(filepath)
@@ -24,6 +21,10 @@ M.start = function(args)
       vim.api.nvim_set_current_buf(existing_buf)
       return
     end
+
+    -- welcome has no exercises, just display it raw
+    local lines = vim.fn.readfile(filepath)
+    local buf = vim.api.nvim_create_buf(false, true)
 
     -- Safe name setting
     vim.api.nvim_buf_set_name(buf, filepath)
