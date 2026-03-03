@@ -124,13 +124,6 @@ M.open = function(sections, runner, filepath)
 
     vim.api.nvim_buf_clear_namespace(lesson_buf, ns, current_closing, current_closing + 2)
 
-    -- vim.api.nvim_buf_set_extmark(lesson_buf, ns, current_closing + 1, 0, {
-    --   virt_lines_above = true,
-    --   virt_lines = {
-    --     { { "  result: " .. display_result, "Comment" } },
-    --     { { correct and "  ✓ Correct!" or "  ✗ " .. msg, correct and "DiagnosticOk" or "DiagnosticError" } },
-    --   },
-    -- })
     local virt = {}
     if correct ~= nil then
       table.insert(virt, { { "  result: " .. display_result, "Comment" } })
