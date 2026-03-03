@@ -4,7 +4,7 @@ An interactive Lua and neovim API tutorial — right inside your editor.
 
 `gl`: to jump to lua lesson list
 `gn`: to jump to lua in neovim lesson list
-`gf`: on top of a lesson name to jump to that lesson
+`<CR>`: on top of a lesson name to jump to that lesson
 `gO`: in the lesson to return here
 
 ---
@@ -15,8 +15,8 @@ An interactive Lua and neovim API tutorial — right inside your editor.
 - **Edit code**: Inside a lesson, press `<CR>` on any code block to open the exercise buffer.
 - **Execute**: Press `<CR>` in normal mode (or your configured run key) to run your code against the test.
 - **Evaluate**: To pass an exercise, your code must "output" a value. You can do this in two ways:
-    - **Return**: Use `return value`.
-    - **Print**: Use `print(value)` or `vim.print(value)` (The runner captures the last thing printed).
+  - **Return**: Use `return value`.
+  - **Print**: Use `print(value)` or `vim.print(value)` (The runner captures the last thing printed).
 - **Feedback**: Virtual text shows ✓ with your result, or ✗ showing the difference between Expected and Actual.
 - **Return to ToC**: Press `gO` in a lesson to return here.
 - **Exit**: Press `q` to close the exercise or the lesson.
@@ -36,7 +36,7 @@ An interactive Lua and neovim API tutorial — right inside your editor.
 4. `control_flow` | if/elseif/else, while, repeat/until, numeric for, generic for, break, goto
 5. `functions` | Closures, multiple returns, variadic args, tail calls, upvalues, HOF
 6. `oop` | Class pattern, constructors, inheritance, method chaining, mixins
-7. `metatables` | All metamethods, __index/__newindex, operator overloading, __call
+7. `metatables` | All metamethods, **index/**newindex, operator overloading, \_\_call
 8. `iterators` | Generic for internals, stateless/stateful iterators, coroutine iterators
 9. `patterns` | Pattern language, character classes, captures, anchors, balanced match
 10. `error_handling` | pcall, xpcall, error(), assert, error objects, stack traces
@@ -46,7 +46,7 @@ An interactive Lua and neovim API tutorial — right inside your editor.
 
 ### Part II — Neovim API
 
-14. `vim_api` | vim.* namespace, inspect, fn, api, tbl_* utilities, notify, schedule
+14. `vim_api` | vim._ namespace, inspect, fn, api, tbl\__ utilities, notify, schedule
 15. `vim_options` | vim.opt/o/bo/wo, vim.g/b/w/t/env, scopes, option metadata
 16. `vim_keymaps` | keymap.set/del, all modes, buffer-local, expr, which-key desc
 17. `vim_autocommands` | create_autocmd, augroups, events, patterns, once, exec_autocmds

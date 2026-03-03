@@ -43,12 +43,12 @@ Open a specific lesson:
 
 ### Table of contents
 
-| Key  | Action                           |
-| ---- | -------------------------------- |
-| `gf` | Open the lesson under the cursor |
-| `gl` | Jump to Part I — Lua language    |
-| `gn` | Jump to Part II — Neovim API     |
-| `q`  | Close                            |
+| Key    | Action                           |
+| ------ | -------------------------------- |
+| `<CR>` | Open the lesson under the cursor |
+| `gl`   | Jump to Part I — Lua language    |
+| `gn`   | Jump to Part II — Neovim API     |
+| `q`    | Close                            |
 
 ### Inside a lesson
 
