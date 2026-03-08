@@ -241,6 +241,9 @@ M.open = function(sections, runner, filepath)
     local editor_win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(editor_win, editor_buf)
 
+    -- Namespace for virtual text shown inside the editor split
+    local editor_ns = vim.api.nvim_create_namespace("learnlua_editor")
+
     vim.keymap.set("n", cfg.mappings.submit_code, function()
       local lines = vim.api.nvim_buf_get_lines(editor_buf, 0, -1, false)
       local correct, msg, result = runner.check(lines, section.expected)
@@ -249,6 +252,25 @@ M.open = function(sections, runner, filepath)
         close_editor(editor_win, editor_buf, lesson_win)
       end
     end, { buffer = editor_buf })
+
+    vim.keymap.set("n", cfg.mappings.test_code, function()
+      local lines = vim.api.nvim_buf_get_lines(editor_buf, 0, -1, false)
+      local _, _, result = runner.check(lines, section.expected)
+
+      -- Clear previous editor virtual text
+      vim.api.nvim_buf_clear_namespace(editor_buf, editor_ns, 0, -1)
+
+      local last_line = #lines - 1
+      local display_result = tostring(result):gsub("\n", " "):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+
+      local virt = {}
+      table.insert(virt, { { "  output: " .. display_result, "Comment" } })
+
+      vim.api.nvim_buf_set_extmark(editor_buf, editor_ns, last_line, 0, {
+        virt_lines_above = false,
+        virt_lines = virt,
+      })
+    end, { buffer = editor_buf, desc = "Test code output" })
 
     vim.keymap.set("n", cfg.mappings.close_editor, function()
       close_editor(editor_win, editor_buf, lesson_win)

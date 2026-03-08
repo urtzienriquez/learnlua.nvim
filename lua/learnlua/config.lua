@@ -4,6 +4,7 @@ M.defaults = {
   mappings = {
     open_editor = "<CR>", -- Inside code block
     submit_code = "<CR>", -- Inside editor
+    test_code = "tc", -- Inside editor
     close_editor = "q",
     close_lesson = "q",
     go_welcome = "gO",
