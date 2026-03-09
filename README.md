@@ -63,6 +63,7 @@ Open a specific lesson:
 | Key    | Action                             |
 | ------ | ---------------------------------- |
 | `<CR>` | Run your code and check the result |
+| `tc`   | Run your code to test (test_code)  |
 | `q`    | Close and return to the lesson     |
 
 ### change default keymaps
@@ -77,6 +78,7 @@ return {
     mappings = {
       open_editor = "<CR>", -- Inside code block
       submit_code = "<CR>", -- Inside editor
+      test_code = "tc",
       close_editor = "q",
       close_lesson = "q",
       go_welcome = "gO",
@@ -93,6 +95,8 @@ return {
 ## How it works
 
 Each lesson is a markdown file with embedded code blocks and expected outputs. Press `<CR>` on any block to open a small split editor. Edit the code, press `<CR>` to run it — virtual text shows `✓` Correct! or `✗` with the difference between expected and actual output. Passing an exercise closes the editor automatically.
+
+Inside of code editor, you can use "tc" (in normal mode) to test your code and see all the outputs of print commands. 
 
 LSP completions and diagnostics are available in the exercise editor if lua-language-server is installed.
 
