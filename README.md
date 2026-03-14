@@ -4,7 +4,7 @@ An interactive Lua and Neovim API tutorial — right inside your editor.
 
 Requirements
 
-- lua-language-server (optional, for LSP support — install via Mason or your system package manager)
+- lua-language-server or emmylua_ls (optional, for LSP support — install via Mason or your system package manager)
 
 ---
 
@@ -74,6 +74,7 @@ return {
   dev = true,
   cmd = "Learn",
   opts = {
+    lsp = "lua_ls",         -- or emmylua_ls
     -- default keymaps
     mappings = {
       open_editor = "<CR>", -- Inside code block
@@ -98,7 +99,7 @@ Each lesson is a markdown file with embedded code blocks and expected outputs. P
 
 Inside of code editor, you can use "tc" (in normal mode) to test your code and see all the outputs of print commands. 
 
-LSP completions and diagnostics are available in the exercise editor if lua-language-server is installed.
+LSP completions and diagnostics are available in the exercise editor if a compatible language server is installed.
 
 ---
 
