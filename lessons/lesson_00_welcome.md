@@ -11,7 +11,7 @@ An interactive Lua and neovim API tutorial — right inside your editor.
 
 ## How to use this plugin
 
-- **Open a lesson**: Place your cursor on a lesson filename below and press `gf`.
+- **Open a lesson**: Place your cursor on a lesson filename below and press `<CR>`.
 - **Edit code**: Inside a lesson, press `<CR>` on any code block to open the exercise buffer.
 - **Execute**: Press `<CR>` in normal mode (or your configured run key) to run your code against the test.
 - **Evaluate**: To pass an exercise, your code must "output" a value. You can do this in two ways:
