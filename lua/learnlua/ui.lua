@@ -58,7 +58,7 @@ local function start_lsp(buf,lsp)
   local client_id = vim.lsp.start({
     name = lsp,
     cmd = { cmd },
-    root_dir = vim.fn.getcwd(),
+    root_dir = nil,
     settings = LSP_SETTINGS,
   }, { bufnr = buf })
 
