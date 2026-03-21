@@ -1,6 +1,7 @@
 local M = {}
 
 M.defaults = {
+  lsp = "lua_ls",
   mappings = {
     open_editor = "<CR>", -- Inside code block
     submit_code = "<CR>", -- Inside editor

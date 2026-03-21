@@ -11,20 +11,20 @@ local LSP_SETTINGS = {
   },
 }
 
-local function start_lsp(buf)
+local function start_lsp(buf,lsp)
   -- Safety: only attach to lua buffers, never markdown or anything else
   if vim.bo[buf].filetype ~= "lua" then
     return
   end
 
   -- If already attached to THIS buffer specifically, do nothing
-  local already = vim.lsp.get_clients({ name = "lua_ls", bufnr = buf })
+  local already = vim.lsp.get_clients({ name = lsp, bufnr = buf })
   if #already > 0 then
     return
   end
 
   -- If the server is running but not yet attached to this buffer, just attach
-  local existing = vim.lsp.get_clients({ name = "lua_ls" })
+  local existing = vim.lsp.get_clients({ name = lsp })
   if #existing > 0 then
     vim.lsp.buf_attach_client(buf, existing[1].id)
     return
@@ -32,12 +32,18 @@ local function start_lsp(buf)
 
   -- Server not running yet — find the binary
   local candidates = {
-    vim.fn.stdpath("data") .. "/mason/bin/lua-language-server",
-    vim.fn.exepath("lua-language-server"),
+    lua_ls = {
+      vim.fn.stdpath("data") .. "/mason/bin/lua-language-server",
+      vim.fn.exepath("lua-language-server"),
+    },
+    emmylua_ls = {
+      vim.fn.stdpath("data") .. "/mason/bin/emmylua_ls",
+      vim.fn.exepath("emmylua_ls"),
+    }
   }
 
   local cmd
-  for _, path in ipairs(candidates) do
+  for _, path in ipairs(candidates[lsp]) do
     if path ~= "" and vim.fn.executable(path) == 1 then
       cmd = path
       break
@@ -45,19 +51,19 @@ local function start_lsp(buf)
   end
 
   if not cmd then
-    vim.notify("learnlua: lua-language-server not found, LSP unavailable", vim.log.levels.WARN)
+    vim.notify(string.format("learnlua: %s not found, LSP unavailable", lsp), vim.log.levels.WARN)
     return
   end
 
   local client_id = vim.lsp.start({
-    name = "lua_ls",
+    name = lsp,
     cmd = { cmd },
-    root_dir = vim.fn.getcwd(),
+    root_dir = nil,
     settings = LSP_SETTINGS,
   }, { bufnr = buf })
 
   if not client_id then
-    vim.notify("learnlua: failed to start lua-language-server", vim.log.levels.WARN)
+    vim.notify(string.format("learnlua: failed to start %s", lsp), vim.log.levels.WARN)
   end
 
   if client_id then
@@ -215,7 +221,7 @@ M.open = function(sections, runner, filepath)
 
     -- Set filetype BEFORE calling start_lsp so the filetype guard works correctly
     vim.bo[editor_buf].filetype = "lua"
-    start_lsp(editor_buf)
+    start_lsp(editor_buf, cfg["lsp"])
 
     local function sync_to_lesson()
       local editor_lines = vim.api.nvim_buf_get_lines(editor_buf, 0, -1, false)
